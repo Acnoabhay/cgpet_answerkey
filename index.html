@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CG Vyapam PET26 Answer Key Checker</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --correct: #22c55e;
+            --incorrect: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px 20px 100px 20px; /* Space for the fixed bottom bar */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        h1 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 1.5rem; }
+        h2 { margin: 0 0 15px 0; color: #475569; font-size: 1.1rem; font-weight: 500; }
+
+        .creator-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+        }
+
+        .config-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .set-selector label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .set-selector select {
+            padding: 8px 16px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+            border-left: 4px solid #cbd5e1;
+        }
+
+        .question-card.answered {
+            border-left-color: var(--primary);
+        }
+
+        .q-number {
+            font-weight: 600;
+            min-width: 50px;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .option-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            font-size: 0.9rem;
+        }
+
+        .option-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .option-btn.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .clear-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #64748b;
+        }
+        .clear-btn:hover { background: #e2e8f0; color: #334155;}
+
+        /* Sticky Bottom Display Bar */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            box-shadow: 0 -4px 10px rgb(0 0 0 / 0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .score-display {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 10px 25px;
+            border-radius: 8px;
+            border: 1px solid #bae6fd;
+        }
+
+        .reset-all {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .reset-all:hover { background-color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>PET26 Model Answer Key Evaluator</h2>
+        <div class="creator-badge">Created by acnoabhay</div>
+    </header>
+
+    <div class="config-section">
+        <div class="set-selector">
+            <label for="setSelect">Select Your Question Set:</label>
+            <select id="setSelect" onchange="changeSet()">
+                <option value="A">SET-A</option>
+                <option value="B">SET-B</option>
+                <option value="C">SET-C</option>
+                <option value="D">SET-D</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="questions-grid" id="questionsContainer">
+        </div>
+</div>
+
+<div class="bottom-bar">
+    <button class="reset-all" onclick="resetAllAnswers()">Reset Whole Sheet</button>
+    <div class="score-display">
+        Total Marks: <span id="totalMarks">0</span> / 150
+    </div>
+</div>
+
+<script>
+    const answerKey = {
+        1:  {A:'C', B:'A', C:'C', D:'D'}, 2:  {A:'D', B:'B', C:'C', D:'A'}, 3:  {A:'D', B:'C', C:'A', D:'D'}, 4:  {A:'B', B:'B', C:'B', D:'A'}, 5:  {A:'C', B:'D', C:'C', D:'B'},
+        6:  {A:'C', B:'B', C:'C', D:'B'}, 7:  {A:'A', B:'A', C:'B', D:'A'}, 8:  {A:'B', B:'D', C:'D', D:'A'}, 9:  {A:'A', B:'C', C:'A', D:'C'}, 10: {A:'C', B:'D', C:'A', D:'B'},
+        11: {A:'B', B:'C', C:'B', D:'D'}, 12: {A:'D', B:'D', C:'C', D:'C'}, 13: {A:'C', B:'C', C:'A', D:'C'}, 14: {A:'C', B:'C', C:'A', D:'B'}, 15: {A:'A', B:'C', C:'B', D:'B'},
+        16: {A:'D', B:'B', C:'A', D:'B'}, 17: {A:'D', B:'C', C:'B', D:'C'}, 18: {A:'A', B:'C', C:'A', D:'D'}, 19: {A:'B', B:'A', C:'B', D:'B'}, 20: {A:'B', B:'B', C:'B', D:'C'},
+        21: {A:'D', B:'A', C:'A', D:'A'}, 22: {A:'B', B:'C', C:'B', D:'C'}, 23: {A:'B', B:'A', C:'C', D:'A'}, 24: {A:'C', B:'B', C:'D', D:'B'}, 25: {A:'A', B:'A', C:'D', D:'A'},
+        26: {A:'C', B:'C', C:'A', D:'C'}, 27: {A:'B', B:'A', C:'B', D:'B'}, 28: {A:'B', B:'B', C:'C', D:'A'}, 29: {A:'A', B:'A', C:'D', D:'C'}, 30: {A:'B', B:'B', C:'D', D:'B'},
+        31: {A:'A', B:'D', C:'D', D:'A'}, 32: {A:'C', B:'D', C:'A', D:'C'}, 33: {A:'A', B:'B', C:'C', D:'A'}, 34: {A:'A', B:'B', C:'C', D:'A'}, 35: {A:'D', B:'B', C:'D', D:'C'},
+        36: {A:'B', B:'D', C:'C', D:'C'}, 37: {A:'A', B:'D', C:'B', D:'D'}, 38: {A:'C', B:'A', C:'A', D:'A'}, 39: {A:'D', B:'A', C:'B', D:'B'}, 40: {A:'B', B:'C', C:'B', D:'D'},
+        41: {A:'C', B:'C', C:'A', D:'D'}, 42: {A:'A', B:'A', C:'D', D:'A'}, 43: {A:'C', B:'A', C:'C', D:'D'}, 44: {A:'A', B:'C', C:'D', D:'A'}, 45: {A:'D', B:'A', C:'C', D:'A'},
+        46: {A:'A', B:'A', C:'A', D:'B'}, 47: {A:'C', B:'A', C:'A', D:'C'}, 48: {A:'B', B:'B', C:'A', D:'D'}, 49: {A:'A', B:'B', C:'C', D:'C'}, 50: {A:'A', B:'D', C:'B', D:'B'},
+        51: {A:'A', B:'D', C:'A', D:'A'}, 52: {A:'D', B:'B', C:'A', D:'C'}, 53: {A:'B', B:'A', C:'A', D:'A'}, 54: {A:'B', B:'C', C:'C', D:'C'}, 55: {A:'A', B:'B', C:'C', D:'C'},
+        56: {A:'D', B:'A', C:'C', D:'A'}, 57: {A:'C', B:'C', C:'C', D:'A'}, 58: {A:'D', B:'C', C:'B', D:'A'}, 59: {A:'B', B:'C', C:'D', D:'C'}, 60: {A:'C', B:'B', C:'B', D:'B'},
+        61: {A:'C', B:'B', C:'C', D:'B'}, 62: {A:'C', B:'A', C:'A', D:'B'}, 63: {A:'D', B:'D', C:'A', D:'D'}, 64: {A:'B', B:'D', C:'D', D:'D'}, 65: {A:'C', B:'C', C:'C', D:'B'},
+        66: {A:'B', B:'D', C:'A', D:'A'}, 67: {A:'C', B:'C', C:'D', D:'B'}, 68: {A:'A', B:'C', C:'B', D:'C'}, 69: {A:'C', B:'B', C:'B', D:'A'}, 70: {A:'C', B:'D', C:'A', D:'B'},
+        71: {A:'D', B:'C', C:'C', D:'B'}, 72: {A:'D', B:'C', C:'D', D:'C'}, 73: {A:'C', B:'C', C:'C', D:'D'}, 74: {A:'A', B:'A', C:'B', D:'C'}, 75: {A:'A', B:'B', C:'D', D:'B'},
+        76: {A:'D', B:'A', C:'A', D:'C'}, 77: {A:'D', B:'A', C:'B', D:'D'}, 78: {A:'B', B:'A', C:'C', D:'A'}, 79: {A:'B', B:'D', C:'B', D:'C'}, 80: {A:'A', B:'D', C:'B', D:'A'},
+        81: {A:'A', B:'A', C:'C', D:'B'}, 82: {A:'C', B:'D', C:'B', D:'C'}, 83: {A:'B', B:'D', C:'D', D:'D'}, 84: {A:'D', B:'A', C:'B', D:'A'}, 85: {A:'C', B:'B', C:'D', D:'C'},
+        86: {A:'A', B:'B', C:'D', D:'C'}, 87: {A:'B', B:'B', C:'C', D:'D'}, 88: {A:'A', B:'B', C:'A', D:'B'}, 89: {A:'C', B:'B', C:'C', D:'C'}, 90: {A:'B', B:'C', C:'A', D:'D'},
+        91: {A:'C', B:'C', C:'D', D:'D'}, 92: {A:'A', B:'B', C:'A', D:'D'}, 93: {A:'D', B:'C', C:'B', D:'A'}, 94: {A:'A', B:'C', C:'B', D:'B'}, 95: {A:'B', B:'A', C:'C', D:'B'},
+        96: {A:'C', B:'C', C:'B', D:'C'}, 97: {A:'B', B:'A', C:'D', D:'C'}, 98: {A:'A', B:'A', C:'B', D:'A'}, 99: {A:'C', B:'B', C:'C', D:'D'}, 100:{A:'B', B:'D', C:'A', D:'B'},
+        101:{A:'A', B:'C', C:'D', D:'A'}, 102:{A:'B', B:'B', C:'B', D:'D'}, 103:{A:'C', B:'D', C:'C', D:'B'}, 104:{A:'D', B:'B', C:'C', D:'D'}, 105:{A:'D', B:'A', C:'C', D:'C'},
+        106:{A:'C', B:'C', C:'A', D:'C'}, 107:{A:'A', B:'C', C:'B', D:'D'}, 108:{A:'A', B:'D', C:'B', D:'C'}, 109:{A:'C', B:'C', C:'C', D:'D'}, 110:{A:'A', B:'C', C:'B', D:'C'},
+        111:{A:'B', B:'A', C:'C', D:'C'}, 112:{A:'B', B:'C', C:'D', D:'B'}, 113:{A:'B', B:'B', C:'A', D:'B'}, 114:{A:'C', B:'A', C:'D', D:'A'}, 115:{A:'B', B:'D', C:'C', D:'D'},
+        116:{A:'C', B:'A', C:'A', D:'A'}, 117:{A:'C', B:'A', C:'C', D:'B'}, 118:{A:'D', B:'A', C:'B', D:'A'}, 119:{A:'D', B:'A', C:'A', D:'C'}, 120:{A:'B', B:'C', C:'D', D:'C'},
+        121:{A:'B', B:'B', C:'D', D:'B'}, 122:{A:'C', B:'A', C:'A', D:'C'}, 123:{A:'B', B:'B', C:'A', D:'A'}, 124:{A:'D', B:'A', C:'C', D:'B'}, 125:{A:'D', B:'B', C:'A', D:'D'},
+        126:{A:'C', B:'D', C:'D', D:'C'}, 127:{A:'B', B:'C', C:'D', D:'A'}, 128:{A:'A', B:'B', C:'C', D:'A'}, 129:{A:'D', B:'C', C:'A', D:'B'}, 130:{A:'A', B:'D', C:'A', D:'A'},
+        131:{A:'B', B:'B', C:'D', D:'C'}, 132:{A:'A', B:'D', C:'B', D:'B'}, 133:{A:'C', B:'D', C:'B', D:'A'}, 134:{A:'A', B:'B', C:'C', D:'A'}, 135:{A:'C', B:'A', C:'B', D:'D'},
+        136:{A:'A', B:'C', C:'C', D:'C'}, 137:{A:'D', B:'C', C:'A', D:'B'}, 138:{A:'A', B:'B', C:'D', D:'A'}, 139:{A:'A', B:'A', C:'D', D:'D'}, 140:{A:'A', B:'C', C:'B', D:'B'},
+        141:{A:'B', B:'A', C:'A', D:'D'}, 142:{A:'B', B:'B', C:'C', D:'C'}, 143:{A:'D', B:'D', C:'B', D:'C'}, 144:{A:'A', B:'B', C:'B', D:'A'}, 145:{A:'D', B:'D', C:'A', D:'A'},
+        146:{A:'D', B:'C', C:'A', D:'A'}, 147:{A:'C', B:'A', C:'A', D:'B'}, 148:{A:'C', B:'C', C:'A', D:'D'}, 149:{A:'A', B:'A', C:'B', D:'D'}, 150:{A:'C', B:'D', C:'D', D:'B'}
+    };
+
+    let userAnswers = {};
+
+    function init() {
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+        
+        for (let i = 1; i <= 150; i++) {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `q-card-${i}`;
+
+            const qNum = document.createElement('div');
+            qNum.className = 'q-number';
+            qNum.innerText = `Q. ${i}`;
+
+            const optGroup = document.createElement('div');
+            optGroup.className = 'options-group';
+
+            ['A', 'B', 'C', 'D'].forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.id = `btn-${i}-${opt}`;
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(i, opt);
+                optGroup.appendChild(btn);
+            });
+
+            const clearBtn = document.createElement('button');
+            clearBtn.className = 'clear-btn';
+            clearBtn.innerText = 'Clear';
+            clearBtn.onclick = () => clearQuestion(i);
+
+            card.appendChild(qNum);
+            card.appendChild(optGroup);
+            card.appendChild(clearBtn);
+            container.appendChild(card);
+        }
+        calculateScore();
+    }
+
+    function selectOption(qNum, selectedOpt) {
+        ['A', 'B', 'C', 'D'].forEach(opt => {
+            document.getElementById(`btn-${qNum}-${opt}`).classList.remove('selected');
+        });
+
+        userAnswers[qNum] = selectedOpt;
+        document.getElementById(`btn-${qNum}-${selectedOpt}`).classList.add('selected');
+        document.getElementById(`q-card-${qNum}`).classList.add('answered');
+
+        calculateScore();
+    }
+
+    function clearQuestion(qNum) {
+        if(userAnswers[qNum]) {
+            document.getElementById(`btn-${qNum}-${userAnswers[qNum]}`).classList.remove('selected');
+            document.getElementById(`q-card-${qNum}`).classList.remove('answered');
+            delete userAnswers[qNum];
+            calculateScore();
+        }
+    }
+
+    function changeSet() {
+        calculateScore();
+    }
+
+    function calculateScore() {
+        const activeSet = document.getElementById('setSelect').value;
+        let score = 0;
+
+        for (let i = 1; i <= 150; i++) {
+            if (userAnswers[i] && userAnswers[i] === answerKey[i][activeSet]) {
+                score++;
+            }
+        }
+
+        document.getElementById('totalMarks').innerText = score;
+    }
+
+    function resetAllAnswers() {
+        if(confirm("Are you sure you want to clear all selections?")) {
+            userAnswers = {};
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelectorAll('.question-card').forEach(c => c.classList.remove('answered'));
+            calculateScore();
+        }
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
